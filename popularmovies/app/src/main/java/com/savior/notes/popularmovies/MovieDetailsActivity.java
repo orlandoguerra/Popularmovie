@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.savior.notes.popularmovies.data.AsyncTaskCompleteListener;
 import com.savior.notes.popularmovies.data.Constants;
 import com.savior.notes.popularmovies.data.JsonUtils;
 import com.savior.notes.popularmovies.data.MovieBean;
@@ -19,17 +20,21 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.net.URL;
 
-public class MovieDetailsActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class MovieDetailsActivity extends AppCompatActivity implements AsyncTaskCompleteListener<String>{
 
     private static final String TAG = MovieDetailsActivity.class.getSimpleName();
     private static final String SAVED_STATE_JSON = "SAVED_STATE_JSON";
-    private ImageView mUrlDisplayTextView;
-    private TextView mTitleTextView;
-    private TextView mDateTextView;
-    private TextView mVoteTextView;
-    private TextView mPlotTextView;
-    private ImageView mImageStatus;
     private String searchResultsSaved;
+
+    @BindView(R.id.image_details_movie) ImageView mUrlDisplayTextView;
+    @BindView(R.id.tv_movie_title_display) TextView mTitleTextView;
+    @BindView(R.id.tv_movie_date_display) TextView mDateTextView;
+    @BindView(R.id.tv_movie_vote_display) TextView mVoteTextView;
+    @BindView(R.id.tv_movie_plot_display) TextView mPlotTextView;
+    @BindView(R.id.iv_image_status) ImageView mImageStatus;
 
 
     @Override
@@ -41,15 +46,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
             searchResultsSaved = savedInstanceState.getString(SAVED_STATE_JSON);
         }
 
+        ButterKnife.bind(this);
         String updateId = getIntent().getStringExtra(Constants.MOVIE_ID);
         URL url = NetworkUtils.buildUrlDetailsMovie(updateId);
-        new LoadMovieTask().execute(url);
-        mUrlDisplayTextView = (ImageView) findViewById(R.id.image_details_movie);
-        mTitleTextView = (TextView)findViewById(R.id.tv_movie_title_display);
-        mDateTextView = (TextView)findViewById(R.id.tv_movie_date_display);
-        mVoteTextView = (TextView)findViewById(R.id.tv_movie_vote_display);
-        mPlotTextView = (TextView)findViewById(R.id.tv_movie_plot_display);
-        mImageStatus = (ImageView) findViewById(R.id.iv_image_status);
+        if(searchResultsSaved == null){
+            new DetailsAsyncTask(this, this).execute(url);
+        }else{
+            onTaskComplete(searchResultsSaved);
+        }
+
+
     }
 
     @Override
@@ -60,7 +66,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void fillInformation(MovieBean movie){
         Picasso.with(MovieDetailsActivity.this).load(
-                NetworkUtils.getPosterImage(movie.getPosterPath())).into(mUrlDisplayTextView);
+                NetworkUtils.getPosterImage(movie.getPosterPath()))
+                .placeholder(R.drawable.ic_group_black)
+                .error(R.drawable.ic_group_black)
+                .into(mUrlDisplayTextView);
         mTitleTextView.setText(movie.getTitle());
         mDateTextView.setText(movie.getDate());
         mVoteTextView.setText(movie.getVote());
@@ -87,37 +96,19 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public class LoadMovieTask extends AsyncTask<URL, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+    @Override
+    public void onTaskComplete(String result) {
+        if (result == null || result.equals("")) {
+            return;
         }
 
-        //This the only task made in background
-        @Override
-        protected String doInBackground(URL... params) {
-            if(searchResultsSaved != null){
-                return searchResultsSaved;
-            }
-            URL searchUrl = params[0];
-            return NetworkUtils.getResponseFromHttpUrl(searchUrl);
+        searchResultsSaved = result;
+        try {
+            MovieBean movie = JsonUtils.getMovieFromJson(result);
+            fillInformation(movie);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        protected void onPostExecute(String searchResults) {
-            if (searchResults == null && searchResults.equals("")) {
-                return;
-            }
-
-            searchResultsSaved = searchResults;
-            try {
-                MovieBean movie = JsonUtils.getMovieFromJson(searchResults);
-                fillInformation(movie);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
+
 }

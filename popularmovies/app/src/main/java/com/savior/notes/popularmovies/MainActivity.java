@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,32 +18,34 @@ import com.savior.notes.popularmovies.data.Constants;
 import com.savior.notes.popularmovies.data.JsonUtils;
 import com.savior.notes.popularmovies.data.MovieBean;
 import org.json.JSONException;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
+    @BindView(R.id.rv_movies) RecyclerView mRecyclerView;
+    @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
+
     private MovieRecyclerAdapter mAdapter;
-    private RecyclerView mRecyclerView;
     private String SAVED_STATE_JSON = "SavedJson";
     private static final String TAG = MainActivity.class.getSimpleName();
     private List<MovieBean> listMovies = null;
-    private ProgressBar mLoadingIndicator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mLoadingIndicator = (ProgressBar)findViewById(R.id.pb_loading_indicator);
+        ButterKnife.bind(this);
         mLoadingIndicator.setVisibility(View.VISIBLE);
-
         SharedPreferences sPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String orderString = sPreferences.getString(getString(R.string.order),getString(R.string.rated_value));
         sPreferences.registerOnSharedPreferenceChangeListener(this);
         new MovieTask().execute(NetworkUtils.buildUrl(orderString));
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
-        GridLayoutManager layoutManager = new GridLayoutManager(this,3);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,numberOfColumns());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new MovieRecyclerAdapter(this, new ClickMovie());
@@ -119,5 +122,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onDestroy();
         SharedPreferences sPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    private int numberOfColumns() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int widthDivider = 400;
+        int width = displayMetrics.widthPixels;
+        int nColumns = width / widthDivider;
+        if (nColumns < 2) return 2;
+        return nColumns;
     }
 }

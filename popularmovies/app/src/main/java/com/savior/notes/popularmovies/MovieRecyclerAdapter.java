@@ -48,7 +48,10 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<MovieViewHolder> 
     public void onBindViewHolder(MovieViewHolder holder, int position)  {
         MovieBean movDesc = movieList.get(position);
         holder.listItemMovieView.setText(movDesc.getTitle());
-        Picasso.with(mContext).load(NetworkUtils.getPosterImage(movDesc.getPosterPath())).into(holder.mImageView);
+        Picasso.with(mContext).load(NetworkUtils.getPosterImage(movDesc.getPosterPath()))
+                .placeholder(R.drawable.ic_group_black)
+                .error(R.drawable.ic_group_black)
+                .into(holder.mImageView);
         holder.itemView.setTag(movDesc);
     }
 
