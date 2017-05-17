@@ -62,9 +62,10 @@ public class NetworkUtils {
     }
 
 
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+    public static String getResponseFromHttpUrl(URL url) {
+        HttpURLConnection urlConnection = null;
         try {
+            urlConnection = (HttpURLConnection) url.openConnection();
             InputStream in = urlConnection.getInputStream();
 
             Scanner scanner = new Scanner(in);
@@ -73,12 +74,14 @@ public class NetworkUtils {
             boolean hasInput = scanner.hasNext();
             if (hasInput) {
                 return scanner.next();
-            } else {
-                return null;
             }
+        }catch(IOException ioe){
+            ioe.printStackTrace();
         } finally {
-            urlConnection.disconnect();
+            if(urlConnection != null)
+                urlConnection.disconnect();
         }
+        return null;
     }
 
 

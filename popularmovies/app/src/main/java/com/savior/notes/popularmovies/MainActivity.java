@@ -78,19 +78,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         @Override
         protected String doInBackground(URL... params) {
             URL searchUrl = params[0];
-            String searchResults = null;
-            try {
-                searchResults = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return searchResults;
+            return NetworkUtils.getResponseFromHttpUrl(searchUrl);
         }
 
         @Override
         protected void onPostExecute(String searchResults) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (searchResults == null && searchResults.equals("")) {
+            if (searchResults == null || searchResults.equals("")) {
                 return;
             }
             try {

@@ -101,13 +101,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 return searchResultsSaved;
             }
             URL searchUrl = params[0];
-            String results = null;
-            try {
-                results = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return results;
+            return NetworkUtils.getResponseFromHttpUrl(searchUrl);
         }
 
         @Override
