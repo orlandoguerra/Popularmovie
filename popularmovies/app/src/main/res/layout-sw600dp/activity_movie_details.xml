@@ -9,40 +9,68 @@
         android:layout_height="fill_parent"
         android:layout_margin="10dp">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:orientation="horizontal"
-        android:layout_height="fill_parent"
-        android:layout_margin="10dp">
-
-        <ImageView
-            android:id="@+id/image_details_movie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:clickable="true"/>
-
         <LinearLayout
             android:layout_width="fill_parent"
+            android:orientation="horizontal"
+            android:layout_height="fill_parent"
+            android:layout_margin="10dp">
+
+            <ImageView
+                android:id="@+id/image_details_movie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:clickable="true"/>
+
+            <LinearLayout
+            android:layout_width="wrap_content"
             android:orientation="vertical"
             android:layout_height="fill_parent"
             android:layout_margin="5dp">
 
-            <TextView
-                android:id="@+id/tv_movie_title_display"
-                style="@style/commonStyle"
-                android:textSize="22sp"
-                android:textStyle="bold"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp">
+
+                    <TextView
+                        android:id="@+id/tv_movie_title_display"
+                        style="@style/commonStyle"
+                        android:textSize="22sp"
+                        android:textStyle="bold"/>
+
+                    <ImageView
+                        android:id="@+id/iv_image_like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/ic_star_border_black"
+                        android:onClick="changeFavorite"/>
+
+                </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_movie_date_display"
                 style="@style/commonStyle"
                 android:textSize="18sp" />
 
+                <TextView
+                    android:id="@+id/tv_movie_desc_overview"
+                    style="@style/commonStyle"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="@string/overview_text"/>
+
+                <TextView
+                    android:id="@+id/tv_movie_plot_display"
+                    style="@style/commonStyle"
+                    android:textSize="16sp"/>
+
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:orientation="horizontal"
                 android:layout_height="fill_parent"
                 android:layout_margin="5dp">
@@ -57,32 +85,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-                <ImageView
-                    android:id="@+id/iv_image_like"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:background="@drawable/ic_star_border_black"
-                    android:onClick="changeFavorite"/>
-
             </LinearLayout>
+
+
 
         </LinearLayout>
 
-    </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_movie_desc_overview"
-            style="@style/commonStyle"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="@string/overview_text"/>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_movie_plot_display"
-            style="@style/commonStyle"
-            android:background="@drawable/customborder"
-            android:textSize="16sp"/>
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_trailers"

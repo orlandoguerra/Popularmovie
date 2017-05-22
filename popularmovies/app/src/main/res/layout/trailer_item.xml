@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="1sp"
+    android:paddingRight="1sp"
+    android:layout_margin="1sp"
+    android:background="@drawable/customborder"
+    android:clickable="true">
+
+
+    <ImageView
+        android:id="@+id/image_trailer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

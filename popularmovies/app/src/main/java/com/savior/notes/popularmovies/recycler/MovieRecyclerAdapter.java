@@ -1,4 +1,4 @@
-package com.savior.notes.popularmovies;
+package com.savior.notes.popularmovies.recycler;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.savior.notes.popularmovies.ListItemClickListener;
+import com.savior.notes.popularmovies.NetworkUtils;
+import com.savior.notes.popularmovies.R;
 import com.savior.notes.popularmovies.data.MovieBean;
 import com.squareup.picasso.Picasso;
 
@@ -52,7 +55,7 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<MovieViewHolder> 
                 .placeholder(R.drawable.ic_group_black)
                 .error(R.drawable.ic_group_black)
                 .into(holder.mImageView);
-        holder.itemView.setTag(movDesc);
+        //holder.itemView.setTag(movDesc);
     }
 
     @Override

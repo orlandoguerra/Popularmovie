@@ -9,14 +9,19 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.savior.notes.popularmovies.data.Constants;
+import com.savior.notes.popularmovies.data.FavFavoriteDAO;
 import com.savior.notes.popularmovies.data.JsonUtils;
 import com.savior.notes.popularmovies.data.MovieBean;
+import com.savior.notes.popularmovies.data.PopularMoviesDatabaseHelper;
+import com.savior.notes.popularmovies.recycler.MovieRecyclerAdapter;
+
 import org.json.JSONException;
 import java.net.URL;
 import java.util.List;
@@ -30,10 +35,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
 
     private MovieRecyclerAdapter mAdapter;
-    private String SAVED_STATE_JSON = "SavedJson";
-    private static final String TAG = MainActivity.class.getSimpleName();
     private List<MovieBean> listMovies = null;
-
+    private FavFavoriteDAO favFavoriteDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,20 +46,46 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mLoadingIndicator.setVisibility(View.VISIBLE);
         SharedPreferences sPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String orderString = sPreferences.getString(getString(R.string.order),getString(R.string.rated_value));
+        Log.i(this.getClass().getName(),"xxxxxxxxxxxxxxxxxxxxxxxxx"+orderString);
         sPreferences.registerOnSharedPreferenceChangeListener(this);
-        new MovieTask().execute(NetworkUtils.buildUrl(orderString));
+
         GridLayoutManager layoutManager = new GridLayoutManager(this,numberOfColumns());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new MovieRecyclerAdapter(this, new ClickMovie());
         mRecyclerView.setAdapter(mAdapter);
+        favFavoriteDAO = new FavFavoriteDAO(new PopularMoviesDatabaseHelper(this));
+
+        if(getString(R.string.favorite_value).equals(orderString)){
+            listMovies = favFavoriteDAO.listFavorites();
+            mAdapter.swapCursor(listMovies);
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+        }else{
+            new MovieTask().execute(NetworkUtils.buildUrl(orderString));
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String orderString = sPreferences.getString(getString(R.string.order),getString(R.string.rated_value));
+        if(getString(R.string.favorite_value).equals(orderString)){
+            listMovies = favFavoriteDAO.listFavorites();
+            mAdapter.swapCursor(listMovies);
+        }
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if(key.equals(getString(R.string.order))){
             String order = sharedPreferences.getString(getString(R.string.order),getString(R.string.rated_value));
-            new MovieTask().execute(NetworkUtils.buildUrl(order));
+            if(getString(R.string.favorite_value).equals(order)){
+                listMovies = favFavoriteDAO.listFavorites();
+                mAdapter.swapCursor(listMovies);
+            }else {
+                new MovieTask().execute(NetworkUtils.buildUrl(order));
+            }
         }
     }
 
@@ -97,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 e.printStackTrace();
             }
         }
-
     }
 
     @Override

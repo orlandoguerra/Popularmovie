@@ -33,7 +33,6 @@ public class DetailsAsyncTask extends AsyncTask<URL, Void, String> {
     @Override
     protected String doInBackground(URL... params) {
         URL searchUrl = params[0];
-        System.out.println("-------------------------");
         return NetworkUtils.getResponseFromHttpUrl(searchUrl);
 
     }

@@ -45,4 +45,51 @@ public class JsonUtils {
         return movBean;
     }
 
+    public static List<TrailerMovieBean> parseTrailersFormJson(String jsonStr) throws JSONException {
+        JSONObject json = new JSONObject(jsonStr);
+        JSONArray trailerArray = json.getJSONArray("results");
+        List<TrailerMovieBean> listTrailer = new ArrayList<TrailerMovieBean>();
+        for (int i = 0; i < trailerArray.length(); i++) {
+            JSONObject trailer = trailerArray.getJSONObject(i);
+            TrailerMovieBean tBean = parseTrailerFromJson(trailer);
+            if("YouTube".equals(tBean.getSite())&& "Trailer".equals(tBean.getType())){
+                listTrailer.add(tBean);
+            }
+        }
+        return listTrailer;
+    }
+
+    public static  TrailerMovieBean parseTrailerFromJson(JSONObject trailer) throws JSONException {
+        TrailerMovieBean trailerBean = new TrailerMovieBean();
+        trailerBean.setId(trailer.getString("id"));
+        trailerBean.setKey(trailer.getString("key"));
+        trailerBean.setSite(trailer.getString("site"));
+        trailerBean.setType(trailer.getString("type"));
+        return trailerBean;
+    }
+
+    public static List<ReviewBean> parseReviewsFormJson(String jsonStr) throws JSONException {
+        JSONObject json = new JSONObject(jsonStr);
+        JSONArray reviewArray = json.getJSONArray("results");
+        List<ReviewBean> listReview = new ArrayList<ReviewBean>();
+        for (int i = 0; i < reviewArray.length(); i++) {
+            JSONObject review = reviewArray.getJSONObject(i);
+            ReviewBean rBean = parseReviewFromJson(review);
+            listReview.add(rBean);
+
+        }
+        return listReview;
+    }
+
+    public static  ReviewBean parseReviewFromJson(JSONObject trailer) throws JSONException {
+        ReviewBean reviewBean = new ReviewBean();
+        reviewBean.setId(trailer.getString("id"));
+        reviewBean.setAuthor(trailer.getString("author"));
+        reviewBean.setContent(trailer.getString("content"));
+        reviewBean.setUrl(trailer.getString("url"));
+        return reviewBean;
+    }
+
+
+
 }

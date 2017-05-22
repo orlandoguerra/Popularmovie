@@ -1,10 +1,12 @@
-package com.savior.notes.popularmovies;
+package com.savior.notes.popularmovies.recycler;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.savior.notes.popularmovies.ListItemClickListener;
+import com.savior.notes.popularmovies.R;
 
 /**
  * Created by Orlando on 5/10/2017.
@@ -24,7 +26,6 @@ public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnC
         mImageView = (ImageView) itemView.findViewById(R.id.imageMovie);
         itemView.setOnClickListener(this);
         mImageView.setOnClickListener(this);
-
     }
 
     @Override
