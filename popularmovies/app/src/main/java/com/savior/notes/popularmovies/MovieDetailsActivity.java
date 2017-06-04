@@ -1,7 +1,10 @@
 package com.savior.notes.popularmovies;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 
 import com.savior.notes.popularmovies.data.AsyncTaskCompleteListener;
 import com.savior.notes.popularmovies.data.Constants;
+import com.savior.notes.popularmovies.data.ConstantsContract;
 import com.savior.notes.popularmovies.data.FavFavoriteDAO;
 import com.savior.notes.popularmovies.data.JsonUtils;
 import com.savior.notes.popularmovies.data.MovieBean;
@@ -97,7 +101,7 @@ public class MovieDetailsActivity extends AppCompatActivity{
         //Load Reviews
         runLoader(reviewsResultsSaved, REVIEWS_SEARCH_LOADER,NetworkUtils.getReviews(movieId), new ReviewMovieListener());
 
-        favFavoriteDAO = new FavFavoriteDAO(new PopularMoviesDatabaseHelper(this));
+
 
 
     }
@@ -126,19 +130,19 @@ public class MovieDetailsActivity extends AppCompatActivity{
     }
 
     public void changeFavorite(View v) {
+        ContentResolver contentResolver = this.getContentResolver();
         if(isfavorite){
-            favFavoriteDAO.delete(movie.getId());
+            contentResolver.delete(ConstantsContract.FavoriteEntry.CONTENT_URI,"_id=?", new String[]{movie.getId()});
         }else{
             ContentValues favFavoriteContent = new ContentValues();
-            favFavoriteContent.put(Constants.FAV_FIVE._ID,movie.getId());
-            favFavoriteContent.put(Constants.FAV_FIVE.POSTER_PATH,movie.getPosterPath());
-            favFavoriteContent.put(Constants.FAV_FIVE.TITLE,movie.getTitle());
-            favFavoriteDAO.insert(favFavoriteContent);
+            favFavoriteContent.put(ConstantsContract.FavoriteEntry._ID,movie.getId());
+            favFavoriteContent.put(ConstantsContract.FavoriteEntry.poster,movie.getPosterPath());
+            favFavoriteContent.put(ConstantsContract.FavoriteEntry.title,movie.getTitle());
+            contentResolver.insert(ConstantsContract.FavoriteEntry.CONTENT_URI, favFavoriteContent);
         }
 
         isfavorite = !isfavorite;
         mImageLike.setBackgroundResource(isfavorite?R.drawable.ic_star_black:R.drawable.ic_star_border_black);
-
     }
 
     private void fillInformation(MovieBean movie){
@@ -151,7 +155,9 @@ public class MovieDetailsActivity extends AppCompatActivity{
         mDateTextView.setText(movie.getDate());
         mVoteTextView.setText(movie.getVote());
         mPlotTextView.setText(movie.getOverview());
-        isfavorite = favFavoriteDAO.isFavorite(movie.getId());
+        Cursor cursor = this.getContentResolver().query(ConstantsContract.FavoriteEntry.CONTENT_URI, null,
+                "_id=?",new String[]{movie.getId()},null);
+        isfavorite = cursor.moveToFirst()?true:false;
         if(isfavorite){
             mImageLike.setBackgroundResource(R.drawable.ic_star_black);
         }else{
@@ -199,6 +205,7 @@ public class MovieDetailsActivity extends AppCompatActivity{
             }
             searchResultsSaved = result;
             try {
+                Log.i(this.getClass().getName(),"ffffffffffffffffffffffffff"+result);
                 movie = JsonUtils.getMovieFromJson(result);
                 fillInformation(movie);
             } catch (JSONException e) {

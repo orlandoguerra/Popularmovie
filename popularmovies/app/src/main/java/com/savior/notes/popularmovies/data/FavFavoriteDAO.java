@@ -1,9 +1,13 @@
 package com.savior.notes.popularmovies.data;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,28 +17,30 @@ import java.util.List;
  */
 
 public class FavFavoriteDAO {
+    /*
 
-    SQLiteOpenHelper sqlHelper;
-    public FavFavoriteDAO(SQLiteOpenHelper sqlHelper){
-        this.sqlHelper = sqlHelper;
+    Context mContext;
+
+    public FavFavoriteDAO(Context mContext){
+        this.mContext = mContext;
     }
 
     public void insert(ContentValues content){
-        SQLiteDatabase db = sqlHelper.getWritableDatabase();
-        db.insert(Constants.FAV_FIVE.TABLE_NAME, null, content);
-        db.close();
+        ContentResolver contentResolver = mContext.getContentResolver();
+        Uri uri = contentResolver.insert(ConstantsContract.FavoriteEntry.CONTENT_URI, content);
     }
 
     public boolean delete(String id) {
-        SQLiteDatabase db = sqlHelper.getWritableDatabase();
-        boolean result = db.delete(Constants.FAV_FIVE.TABLE_NAME, " _id  =" + id, null) > 0;
-        db.close();
+        Uri returnUri = ContentUris. (ConstantsContract.FavoriteEntry.CONTENT_URI, id);
+        ContentResolver contentResolver = mContext.getContentResolver();
+        int deletedRecords = contentResolver.delete(returnUri, null, null);
+        boolean result = deletedRecords > 0;
         return result;
     }
 
     public boolean isFavorite(String id){
-        SQLiteDatabase db = sqlHelper.getReadableDatabase();
-        Cursor cursor = db.query(Constants.FAV_FIVE.TABLE_NAME, null, "_id = ?", new String[]{id}, null, null, "_id ASC");
+        Cursor cursor = mContext.getContentResolver().query(ConstantsContract.FavoriteEntry.CONTENT_URI, null,
+                "_id = ?", new String[]{id},  "_id ASC");
         if(cursor.moveToFirst()){
             return true;
         }
@@ -55,5 +61,5 @@ public class FavFavoriteDAO {
         cursor.close();
         return listMovies;
     }
-
+*/
 }

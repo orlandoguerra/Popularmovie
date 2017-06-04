@@ -12,4 +12,6 @@
     <string name="popular_label">Popular</string>
     <string name="rated_label">Rated</string>
     <string name="favorite_label">Favorite</string>
+    <string name="no_data_available">No information Available</string>
+
 </resources>

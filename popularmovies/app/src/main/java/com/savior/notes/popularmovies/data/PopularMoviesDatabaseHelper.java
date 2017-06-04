@@ -19,9 +19,10 @@ public class PopularMoviesDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE "+Constants.FAV_FIVE.TABLE_NAME+" (_id INTEGER PRIMARY KEY "
-                + ","+Constants.FAV_FIVE.TITLE+" TEXT"
-                + ","+Constants.FAV_FIVE.POSTER_PATH+" TEXT"
+        db.execSQL("CREATE TABLE "+ ConstantsContract.FavoriteEntry.TABLE_NAME
+                +" (_id TEXT"
+                + ", "+ ConstantsContract.FavoriteEntry.title+" TEXT"
+                + ", "+ ConstantsContract.FavoriteEntry.poster+" TEXT"
                 + ");");
     }
 
